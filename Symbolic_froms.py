@@ -1,6 +1,5 @@
 import sympy as sp
 import numpy as np
-from Direct_and_inverse_problem import ElementaryRotationMatrix
 
 #use .evalf() to compute calculations
 # use result.applyfunc(sp.trigsimp) to simplify trigonometric symbolic matrixes
@@ -512,22 +511,3 @@ class SerialRobotDH:
 
 
 
-
-
-result = EulerAngles.solve_direct_problem('Rx', 'Ry', 'Rz', -sp.pi/2, sp.pi/3, sp.pi/3)
-
-
-matrix = sp.Matrix([
-    [sp.sqrt(2)/2, 0, sp.sqrt(2)/2],
-    [0, -1, 0],
-    [sp.sqrt(2)/2, 0 , -sp.sqrt(2)/2]
-
-
-
-])
-
-result = SymbolicElementaryRotationMatrix.multiply_matrices(result, matrix)
-
-print(f"\n")
-sp.pprint(result)  # This will print the matrix, showing mixed symbolic and numeric values
-print(f"\n")
