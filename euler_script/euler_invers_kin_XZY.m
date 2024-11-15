@@ -76,7 +76,7 @@ elseif c2 == 0 && s2 > 0
     disp(['r23 = ', num2str(R(2,3))]);
     
 elseif c2 == 0 && s2 < 0
-    R(2,1) = cos(uno + tre);
+    R(2,1) = -cos(uno + tre);
     R(2,3) = -sin(uno + tre);
     disp('Special case: angolo = -pi/2');
     disp(['r21 = ', num2str(R(2,1))]);
