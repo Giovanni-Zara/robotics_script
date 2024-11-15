@@ -1,0 +1,148 @@
+% Calcola la matrice di trasformazione DH, supportando parametri simbolici
+function A = dh_matrix(alpha, d, a, theta)
+    A = [cos(theta), -sin(theta) * cos(alpha),  sin(theta) * sin(alpha), a * cos(theta);
+         sin(theta),  cos(theta) * cos(alpha), -cos(theta) * sin(alpha), a * sin(theta);
+         0,           sin(alpha),              cos(alpha),              d;
+         0,           0,                       0,                       1];
+end
+
+% Funzione per moltiplicare una serie di matrici in ordine.
+function result = multiply_matrices(varargin)
+    if nargin < 1
+        error('Devi fornire almeno una matrice come input.');
+    end
+    result = varargin{1};
+    for i = 2:nargin
+        result = result * varargin{i};
+    end
+    result = simplify(result);
+end
+
+% Funzione che restituisce la matrice di rotazione relativa all'asse e all'angolo specificato
+function R = rotation_matrix(axis, angle)
+    if ~ismember(axis, {'x', 'y', 'z'})
+        error('Asse non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+    if axis == 'x'
+        R = [1, 0, 0;
+             0, cos(angle), -sin(angle);
+             0, sin(angle), cos(angle)];
+    elseif axis == 'y'
+        R = [cos(angle), 0, sin(angle);
+             0, 1, 0;
+             -sin(angle), 0, cos(angle)];
+    elseif axis == 'z'
+        R = [cos(angle), -sin(angle), 0;
+             sin(angle), cos(angle), 0;
+             0, 0, 1];
+    else
+        error('Asse non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+end
+
+% Funzione che restituisce p_hom date le la matrici di trasformazione DH
+function result = compute_p_hom(varargin)
+    col = [0; 0; 0; 1];
+    result = multiply_matrices(varargin{:});
+    result = result * col;
+    result = simplify(result);
+end
+
+% Funzione che estrae vettore invariante rispetto alla matrice
+function result = not_rotated_vector(R)
+    [V, D] = eig(R); % autovettori in V, autovalori in D
+    index = diag(D)==1;
+    result = V(:, index);
+    result = vpa(result);
+end
+
+% Funzione che normalizza vettore
+function result = normalize_vector(vec)
+    result = vec/norm(vec);
+    result = vpa(result);
+end
+
+% Funzione che calcola il sin di thetha dalla matrice R_tetha_r !restituisce solo il valore positivo!
+function result = compute_sin(R)
+    result = (1/2) * sqrt((R(1, 2) - R(2, 1))^2 + (R(1, 3) - R(3, 1))^2 + (R(2, 3) - R(3, 2))^2);
+end
+
+% Funzione che calcola il cos di thetha dalla matrice R_tetha_r
+function result = compute_cos(R)
+    result = (1/2) * (R(1, 1) + R(2, 2) + R(3, 3) -1);
+end
+
+% Funzione che calcola r data la matrice R_tetha_r e sin
+function result = compute_r(R, s)
+    arr = [R(3, 2) - R(2, 3);
+           R(1, 3) - R(3, 1);
+           R(2, 1) - R(1, 2)];
+    result = (1/(2*s)) * arr;
+end
+
+% Funzione che calcola la matrice di rotazione di angolo theta attorno al vettore v
+function R = rotation_matrix_for_r(v, theta)
+    if ~isa(theta, 'sym')
+        theta = sym(theta);
+    end
+    v = v / norm(v);
+
+    vx = v(1);
+    vy = v(2);
+    vz = v(3);
+    
+    R = [cos(theta) + vx^2 * (1 - cos(theta)),   vx * vy * (1 - cos(theta)) - vz * sin(theta),   vx * vz * (1 - cos(theta)) + vy * sin(theta);
+         vy * vx * (1 - cos(theta)) + vz * sin(theta),   cos(theta) + vy^2 * (1 - cos(theta)),   vy * vz * (1 - cos(theta)) - vx * sin(theta);
+         vz * vx * (1 - cos(theta)) - vy * sin(theta),   vz * vy * (1 - cos(theta)) + vx * sin(theta),   cos(theta) + vz^2 * (1 - cos(theta))];
+    
+    R = simplify(R);
+end
+
+function result = roll_pitch_yaw(a_1, a_2, a_3, alpha_1, alpha_2, alpha_3)
+    if ~ismember(a_1, {'x', 'y', 'z'})
+        error('Asse 1 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+    if ~ismember(a_2, {'x', 'y', 'z'})
+        error('Asse 2 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+    if ~ismember(a_3, {'x', 'y', 'z'})
+        error('Asse 3 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+
+    R_1 = rotation_matrix(a_1, alpha_1);
+    R_2 = rotation_matrix(a_2, alpha_2);
+    R_3 = rotation_matrix(a_3, alpha_3);
+
+    result = multiply_matrices(R_3, R_2, R_1);
+end
+
+function result = euler_angles(a_1, a_2, a_3, alpha_1, alpha_2, alpha_3)
+    if ~ismember(a_1, {'x', 'y', 'z'})
+        error('Asse 1 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+    if ~ismember(a_2, {'x', 'y', 'z'})
+        error('Asse 2 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+    if ~ismember(a_3, {'x', 'y', 'z'})
+        error('Asse 3 non valido. Usa ''x'', ''y'', o ''z''.');
+    end
+
+    R_1 = rotation_matrix(a_1, alpha_1);
+    R_2 = rotation_matrix(a_2, alpha_2);
+    R_3 = rotation_matrix(a_3, alpha_3);
+
+    result = multiply_matrices(R_1, R_2, R_3);
+end
+
+syms q1 q2 q3 L;
+
+D_1 = dh_matrix(sym(pi/2), 0, 0, q1);
+disp(D_1);
+
+D_2 = dh_matrix(sym(-pi/2), q2, 0, 0);
+disp(D_2);
+
+D_3 = dh_matrix(0, 0, L, q3);
+disp(D_3);
+
+disp(multiply_matrices(D_1, D_2, D_3));
