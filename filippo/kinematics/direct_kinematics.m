@@ -32,7 +32,7 @@ for i = 1:n
             0           0                       0                       1]
 
     T = T * A;
-    %simplify(T);    % solo per matrici simboliche
+    T = simplify(T);    % solo per matrici simboliche
 
 end
 
