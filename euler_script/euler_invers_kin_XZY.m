@@ -85,7 +85,7 @@ end
 
 disp('UNO->ANGOLO X, DUE->ANGOLO Y, TRE->ANGOLO Z')
 uno = atan2(s1,c1)
-due = atan2(c2,c2)
+due = atan2(s2,c2)
 tre = atan2(s3,c3)
 
 

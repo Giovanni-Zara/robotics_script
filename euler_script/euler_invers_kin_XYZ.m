@@ -65,7 +65,7 @@ if c2 ~= 0
 
     disp(['c3 = r11/c2 = ', num2str(c3)]);
     disp(['s3 = -r12/c2 = ', num2str(s3)]);
-    disp(['c1 = r32/c2 = ', num2str(c1)]);
+    disp(['c1 = r33/c2 = ', num2str(c1)]);
     disp(['s1 = -r23/c2 = ', num2str(s1)]);
     
 % Handle special cases when s2 is zero

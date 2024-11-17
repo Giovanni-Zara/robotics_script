@@ -509,5 +509,17 @@ class SerialRobotDH:
         return T.evalf(subs=kwargs)
 
 
+import math as m
 
+q1, q2, q3, q4 = sp.symbols('q1 q2 q3 q4')
+a1, a2, d1, d4 = sp.symbols('a1 a2 d1 d4')
 
+# Define DH table for SCARA robot
+DHTABLE = [
+[sp.pi,   -0.5, 0, q1],
+[-sp.pi/2,  0.6, 0,  q2]
+]
+scara_robot = SerialRobotDH(DHTABLE)
+numeric_result = scara_robot.numeric_forward_kinematics(q1=sp.pi/2, q2=-sp.pi/2)
+print("\nNumeric Transformation Matrix (T0N):")
+sp.pprint(numeric_result)

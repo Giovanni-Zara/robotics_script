@@ -48,8 +48,8 @@ disp('matrice Rzxz')
 print_matrix(zxz, 2)
 % Check if s2 is non-zero
 if s2 ~= 0
-    c3 = R(3,1) / s2;
-    s3 = R(3,2) / s2;
+    c3 = R(3,2) / s2;
+    s3 = R(3,1) / s2;
     c1 = -R(2,3) / s2;
     s1 = R(1,3) / s2;
     
