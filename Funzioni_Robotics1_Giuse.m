@@ -119,6 +119,28 @@ function result = compute_r(R, s)
     result = (1/(2*s)) * arr;
 end
 
+%% Funzione che risolve il problema inverso
+% Data la matrice R ti calcola vettore r e angolo theta
+function [sen_value, cos_value, vect] = inverse_prob(R) 
+    disp('-----Risoluzione problema inverso-----');
+
+    sen_value = compute_sin(R);
+    fprintf('Valore del seno(angolo) è: %.4f\n', sen_value);
+
+    cos_value = compute_cos(R);
+    fprintf('Valore del coseno(angolo) è: %.4f\n', cos_value);
+
+    vect = compute_r(R,sen_value);
+    fprintf('Il vettore è: [ ');
+    fprintf('%.4f ', vect);
+    fprintf(']\n')
+
+    theta = custom_atan2(sen_value, cos_value);
+    disp(['Valore del angolo theta è: ', num2str(theta)]);
+    disp('-----------------------------------');
+
+end
+
 %% Funzione che calcola la matrice di rotazione di angolo theta attorno al VETTORE v
 % ---> è esattamente il direct problem scritto in una altra maniera
 % intorno a VETTORE v (NON asse x, y, z)
@@ -351,11 +373,11 @@ end
 
 %%In the section below, enter the code to solve the exercise.
 
-syms q_1 q_2 l1 l2
-N = 2
-DHTABLE =  [pi -l1 0 q_1; 
-           -pi/2 l2 0 q_2 ];
 
-[T0N, p, n, s, a] = direct_kinematics(N, DHTABLE)
-pretty(T0N)
+R_x_v = [
+            3/4   sqrt(6)/4  -1/4;
+            -1/4  sqrt(6)/4   3/4;
+            sqrt(6)/4 -0.5    sqrt(6)/4
+        ]
 
+inverse_prob(R_x_v);
