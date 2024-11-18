@@ -82,6 +82,7 @@ function result = not_rotated_vector(R)
     index = diag(D)==1;
     result = V(:, index);
     result = vpa(result);
+    disp("NB vettore restituito NON è normalizzato")
 end
 
 %% Funzione che normalizza un vettore
@@ -121,7 +122,7 @@ end
 
 %% Funzione che risolve il problema inverso
 % Data la matrice R ti calcola vettore r e angolo theta
-function [sen_value, cos_value, vect] = inverse_prob(R) 
+function [vect, theta] = inverse_prob(R) 
     disp('-----Risoluzione problema inverso-----');
 
     sen_value = compute_sin(R);
@@ -129,15 +130,60 @@ function [sen_value, cos_value, vect] = inverse_prob(R)
 
     cos_value = compute_cos(R);
     fprintf('Valore del coseno(angolo) è: %.4f\n', cos_value);
+    
+    if sen_value == 0
+        disp("CASO SINGOLARE sen = 0");
+        theta = custom_atan2(sen_value, cos_value);
 
-    vect = compute_r(R,sen_value);
-    fprintf('Il vettore è: [ ');
-    fprintf('%.4f ', vect);
-    fprintf(']\n')
+        if theta == 0
+            disp("Theta = 0, No solution, rotation axis is undefined");
+        else
+            disp("Theta != 0 -> ci sono due soluzioni di segno opposto")
+            
+            theta = custom_atan2(sen_value, cos_value);
+            disp(['Valore del angolo theta è: ', num2str(theta)]);
+     
+            syms rx ry rz;
+            R12 = R(1, 2);
+            R13 = R(1, 3);
+            R23 = R(2, 3);
+            % Define the system of equations
+            eq1 = 2*rx*ry == R12;
+            eq2 = 2*rx*rz == R13;
+            eq3 = 2*ry*rz == R23;
+            
+            % Solve the system of equations for rx, ry, rz
+            sol = solve([eq1, eq2, eq3], [rx, ry, rz], 'Real', true);
+            
+            % Display the solutions
+            disp('2 possible solutions for [rx, ry, rz]:')
+            for i = 1:length(sol.rx)
+                fprintf('\tSolution %d: rx = %f, ry = %f, rz = %f\n', i, sol.rx(i), sol.ry(i), sol.rz(i));
+            end
+            %return one possible solution
+            vect = [sign(sol.rx(1))*sqrt( R(1,1)/2 ); sign(sol.ry(1))*sqrt( R(2,2)/2 ); sign(sol.rx(1))*sqrt( R(3,3)/2 )];
+            
+            disp('-----------------------------------');
+        end
 
-    theta = custom_atan2(sen_value, cos_value);
-    disp(['Valore del angolo theta è: ', num2str(theta)]);
-    disp('-----------------------------------');
+    else
+        disp("CASO REGOLARE sen != 0 -> ci sono due soluzioni di segno opposto");
+        vect = compute_r(R,sen_value);
+
+        fprintf('Il PRIMO vettore è: [ ');
+        fprintf('%.4f ', vect);
+        fprintf(']\n');
+        theta = custom_atan2(sen_value, cos_value);
+        disp(['Valore del PRIMO angolo theta è: ', num2str(theta)]);
+
+        fprintf('Il SECONDO vettore è: [ ');
+        fprintf('%.4f ', -vect);
+        fprintf(']\n');
+        theta = custom_atan2(sen_value, cos_value);
+        disp(['Valore del SECONDO angolo theta è: ', num2str(-theta)]);
+        disp('-----------------------------------');
+
+    end
 
 end
 
@@ -372,12 +418,6 @@ end
 
 
 %%In the section below, enter the code to solve the exercise.
+R = (1/3) * [-2 2 -1; 2 1 -2; -1 -2 -2];
+inverse_prob(R);
 
-
-R_x_v = [
-            3/4   sqrt(6)/4  -1/4;
-            -1/4  sqrt(6)/4   3/4;
-            sqrt(6)/4 -0.5    sqrt(6)/4
-        ]
-
-inverse_prob(R_x_v);
