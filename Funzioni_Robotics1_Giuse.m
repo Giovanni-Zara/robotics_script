@@ -78,11 +78,12 @@ end
 %% Funzione che estrae il vettore invariante rispetto alla matrice di rotazione
 % R: matrice di rotazione
 function result = not_rotated_vector(R)
+    disp("WARNING funzione usa una TOLLERANZA 1e-4")
     [V, D] = eig(R); % autovettori in V, autovalori in D
-    index = diag(D)==1;
+    tol = 1e-4; % tolleranza per confrontare gli autovalori
+    index = abs(diag(D) - 1) < tol;
     result = V(:, index);
     result = vpa(result);
-    disp("NB vettore restituito NON è normalizzato")
 end
 
 %% Funzione che normalizza un vettore
@@ -174,13 +175,29 @@ function [vect, theta] = inverse_prob(R)
         fprintf('%.4f ', vect);
         fprintf(']\n');
         theta = custom_atan2(sen_value, cos_value);
-        disp(['Valore del PRIMO angolo theta è: ', num2str(theta)]);
+        if isa(theta, 'sym')
+            % Se theta è simbolico, succede se cos = 0
+            theta = double(theta);  % Converte theta da simbolico a numerico
+            theta_deg = rad2deg(theta);  % Se vuoi theta in gradi
+            disp(['Valore del PRIMO angolo theta è: ', num2str(theta_deg), ' gradi']);
+        else
+            disp(['Valore del PRIMO angolo theta è: ', num2str(theta), ' rad']);
+        end
 
         fprintf('Il SECONDO vettore è: [ ');
         fprintf('%.4f ', -vect);
         fprintf(']\n');
         theta = custom_atan2(sen_value, cos_value);
-        disp(['Valore del SECONDO angolo theta è: ', num2str(-theta)]);
+        if isa(theta, 'sym')
+            % Se theta è simbolico, succede se cos = 0
+            theta = double(-theta);  % Convertilo in tipo numerico
+            theta_deg = rad2deg(theta);  % Se vuoi in gradi
+            disp(['Valore del SECONDO angolo theta è: ', num2str(theta_deg), ' gradi']);
+        else
+            disp(['Valore del SECONDO angolo theta è: ', num2str(-theta), ' rad']);
+        end
+
+        
         disp('-----------------------------------');
 
     end
@@ -211,8 +228,9 @@ function R = rotation_matrix_for_r(v, theta)
 end
 
 %% Funzione che calcola la matrice di rotazione utilizzando gli angoli di roll, pitch e yaw
-% a_1, a_2, a_3: assi di rotazione ('x', 'y', 'z')
-% alpha_1, alpha_2, alpha_3: angoli di rotazione
+% input params:
+% - a_1, a_2, a_3: assi di rotazione ('x', 'y', 'z')
+% - alpha_1, alpha_2, alpha_3: angoli di rotazione
 function result = roll_pitch_yaw(a_1, a_2, a_3, alpha_1, alpha_2, alpha_3)
     if ~ismember(a_1, {'x', 'y', 'z'})
         error('Asse 1 non valido. Usa ''x'', ''y'', o ''z''.');
@@ -418,6 +436,15 @@ end
 
 
 %%In the section below, enter the code to solve the exercise.
-R = (1/3) * [-2 2 -1; 2 1 -2; -1 -2 -2];
-inverse_prob(R);
 
+b_R_i = [sqrt(2)/2 0 sqrt(2)/2;
+                0 -1 0;
+        sqrt(2)/2 0 -sqrt(2)/2];
+
+i_R_f = roll_pitch_yaw('z', 'y', 'x', pi/3, pi/3, -pi/2);
+disp(double(i_R_f));
+
+inverse_prob(i_R_f)
+
+% b_R_f = b_R_i *  i_R_f;
+% disp(double(b_R_f));
