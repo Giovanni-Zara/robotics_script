@@ -20,9 +20,9 @@ zxy = Rz * Rx * Ry;
 
 %% EDIT HERE THE NUMBERS
 % Assign numeric values to angles if u need numbers - DEPENDS ON EXERCISE
-a = pi/3;  %edit here
-b = pi/3;  %edit here
-c = pi/3;  %edit here
+a = pi/2;  %edit here
+b = pi/4;  %edit here
+c = -pi/4;  %edit here
 %%
 % Define R matrix using numeric values - IT DEPENDS ON THE EXERCISE U HAVE!
 %%For the rotation that u have in the exercises-a, b, c here represents the
@@ -38,7 +38,7 @@ Rzc =[cos(c), -sin(c), 0;
       0,        0,     1];
 
 %% EDIT HERE FOR rotation matrix that DEPENDS ON THE EXERCISE
-R = Rzc * Ryb;      %edit here
+R = Rxa * Ryb * Rzc;      %edit here
 %%
 
 %%FOLLOWING PART IS FIXED

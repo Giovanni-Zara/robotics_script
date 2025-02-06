@@ -511,15 +511,16 @@ class SerialRobotDH:
 
 import math as m
 
-q1, q2, q3, q4 = sp.symbols('q1 q2 q3 q4')
-a1, a2, d1, d4 = sp.symbols('a1 a2 d1 d4')
+r_numeric = [0, -m.sqrt(2)/2, m.sqrt(2)/2]  # A 3-dimensional vector
+theta_numeric = sp.pi / 6  # 45 degrees in radians
 
-# Define DH table for SCARA robot
-DHTABLE = [
-[sp.pi,   -0.5, 0, q1],
-[-sp.pi/2,  0.6, 0,  q2]
-]
-scara_robot = SerialRobotDH(DHTABLE)
-numeric_result = scara_robot.numeric_forward_kinematics(q1=sp.pi/2, q2=-sp.pi/2)
-print("\nNumeric Transformation Matrix (T0N):")
-sp.pprint(numeric_result)
+# Compute the rotation matrix
+rotation_matrix_numeric = PositionAndOrientation.solve_direct_problem(r_numeric, theta_numeric)
+print("Rotation Matrix (numeric theta):")
+print(f"\n\n")
+sp.pprint(rotation_matrix_numeric)
+print(f"\n\n")
+
+Ri = sp.Matrix([[0.5, -0.7071, 0.5], [0.7071, 0, -0.7071], [0.5, 0.7071, 0.5]])
+ris = Ri.T * rotation_matrix_numeric
+sp.pprint(ris)

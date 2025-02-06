@@ -436,15 +436,9 @@ end
 
 
 %%In the section below, enter the code to solve the exercise.
-
-b_R_i = [sqrt(2)/2 0 sqrt(2)/2;
-                0 -1 0;
-        sqrt(2)/2 0 -sqrt(2)/2];
-
-i_R_f = roll_pitch_yaw('z', 'y', 'x', pi/3, pi/3, -pi/2);
-disp(double(i_R_f));
-
-inverse_prob(i_R_f)
-
-% b_R_f = b_R_i *  i_R_f;
-% disp(double(b_R_f));
+ syms q1 q2 q3
+ N = 3
+ DHTABLE =  [0 0 0 q1; 
+            pi/2 0 q2 pi/2;
+             0   0  q3   0];
+ [T0N, p, n, s, a] = direct_kinematics(N, DHTABLE)

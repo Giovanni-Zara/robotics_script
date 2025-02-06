@@ -58,7 +58,7 @@ if s2 ~= 0
     % Display trigonometric components (without pretty for now)
     disp('Trigonometric components based on matrix R:  (s2!=0) ');
 
-    disp(['c2 = r11 ) = ', num2str(c2)]);
+    disp(['c2 = r11 = ', num2str(c2)]);
     %c2 = str2double(c2) * pi / 180
     disp(['s2 = sqrt( (r21)^2 + (r31)^2 ) = ', num2str(s2)]);
 

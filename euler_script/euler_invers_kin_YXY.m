@@ -20,9 +20,9 @@ yxy = Ry * Rx * Ry1;
 
 %% EDIT HERE THE NUMBERS
 % Assign numeric values to angles if u need numbers - DEPENDS ON EXERCISE
-a = pi/3;  %edit here
-b = pi/3;  %edit here
-c = pi/3;  %edit here
+a = pi/4;  %edit here
+b = pi/4;  %edit here
+c = 2.0944;  %edit here
 %%
 % Define R matrix using numeric values - IT DEPENDS ON THE EXERCISE U HAVE!
 %%For the rotation that u have in the exercises-a, b, c here represents the
